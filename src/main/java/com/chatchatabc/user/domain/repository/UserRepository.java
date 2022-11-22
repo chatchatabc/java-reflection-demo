@@ -6,6 +6,10 @@ import org.mvnsearch.microservices.annotator.DatabaseAccess;
 
 @DatabaseAccess
 public interface UserRepository {
+    default String getAdminName() {
+        return "admin";
+    }
+
     @Nullable
     User findById(Long id);
 }
