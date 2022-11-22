@@ -1,0 +1,2 @@
+com.chatchatabc.user.impl.domain.repository.UserRepositoryHibernateImpl
+com.chatchatabc.user.impl.domain.repository.UserRepositoryJdbcImpl
