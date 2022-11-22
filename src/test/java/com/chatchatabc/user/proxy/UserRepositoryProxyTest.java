@@ -7,6 +7,8 @@ import net.bytebuddy.ClassFileVersion;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.matcher.ElementMatchers;
 import org.junit.jupiter.api.Test;
+import org.springframework.cglib.proxy.Enhancer;
+import org.springframework.cglib.proxy.MethodInterceptor;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
@@ -28,7 +30,7 @@ public class UserRepositoryProxyTest {
 
     @Test
     public void testByteBuddyProxy() throws Exception {
-        InvocationHandler invocationHandler = new UserRepositoryInvocationHandler();
+        InvocationHandler invocationHandler = new UserRepositoryByteBuddyInterceptor();
         Class<?> clazz = UserRepository.class;
         Class<?> dynamicType = new ByteBuddy(ClassFileVersion.JAVA_V8)
                 .subclass(clazz)
@@ -40,6 +42,17 @@ public class UserRepositoryProxyTest {
                 .getLoaded();
         final UserRepository userRepository = (UserRepository) dynamicType.newInstance();
         System.out.println(userRepository.findById(1L).getNick());
+    }
+
+    @Test
+    public void testCglibProxy() {
+        MethodInterceptor interceptor = new UserRepositoryMethodInterceptor();
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(UserRepository.class);
+        enhancer.setCallback(interceptor);
+        UserRepository userRepository = (UserRepository) enhancer.create();
+        System.out.println(userRepository.findById(1L).getNick());
+        System.out.println(userRepository.getAdminName());
     }
 
 
