@@ -2,6 +2,8 @@ package com.chatchatabc.user.proxy;
 
 import com.chatchatabc.user.domain.model.User;
 import com.chatchatabc.user.domain.repository.UserRepository;
+import javassist.util.proxy.ProxyFactory;
+import javassist.util.proxy.ProxyObject;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.ClassFileVersion;
 import net.bytebuddy.implementation.MethodDelegation;
@@ -55,5 +57,16 @@ public class UserRepositoryProxyTest {
         System.out.println(userRepository.getAdminName());
     }
 
+    @Test
+    public void testJavassit() throws Exception {
+        ProxyFactory f = new ProxyFactory();
+        f.setInterfaces(new Class[]{UserRepository.class});
+        f.setFilter(m -> !m.isDefault());
+        final Class<?> clazz = f.createClass();
+        final UserRepository userRepository = (UserRepository) clazz.newInstance();
+        ((ProxyObject) userRepository).setHandler(new UserRepositoryJavassitHandler());
+        System.out.println(userRepository.findById(1L).getNick());
+        System.out.println(userRepository.getAdminName());
+    }
 
 }
