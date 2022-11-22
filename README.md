@@ -8,6 +8,7 @@ Java Reflection Demo
 * Class scan from classpath
 * Proxy with JDK dynamic proxy
 * Proxy with ByteBuddy
+* Proxy with Spring CGLIB
 
 # References
 
